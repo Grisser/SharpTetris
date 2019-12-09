@@ -57,13 +57,28 @@ namespace SharpTetris
     }
     class Program
     {
-        static void Main(string[] args)
+
+        static void LifeCycle()
         {
 
             Matrix matrix = new Matrix(10, 20);
-            matrix.Render();
+            bool gameover = false;
 
-            Console.ReadKey();
+            while (!gameover)
+            {
+
+                Console.Clear();
+                matrix.Render();
+                Thread.Sleep(500);
+
+            }
+
+        }
+        static void Main(string[] args)
+        {
+
+            Thread gamecycle = new Thread(LifeCycle);
+            gamecycle.Start();
 
         }
 
