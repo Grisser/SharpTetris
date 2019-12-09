@@ -55,6 +55,36 @@ namespace SharpTetris
         }
 
     }
+
+    class Tetramino
+    {
+
+        /*
+         * 
+         * ТИПЫ ТЕТРОМИНО:
+         * 
+         * 0 - I-тетрамино
+         * 1 - O-тетрамино
+         * 2 - T-тетрамино
+         * 3 - L-тетрамино
+         * 4 - J-тетрамино
+         * 5 - Z-тетрамино
+         * 6 - S-тетрамино
+         * 
+         */
+
+        private int type, rotation;
+        private Dictionary<char, int> position;
+
+        public Tetramino(int type)
+        {
+
+            this.type = type;
+            this.rotation = 0;
+
+        }
+
+    }
     class Program
     {
 
