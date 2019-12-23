@@ -196,10 +196,187 @@ namespace SharpTetris
 
         }
 
-        public char[,] Render()
+        public int[,] Render()
         {
 
-            
+            int[] size = this.GetRenderSize();
+            int[,] result = new int[size[0], size[1]];
+
+            for (int i = 0; i < size[0]; i++)
+                for (int j = 0; j < size[1]; j++)
+                    result[i, j] = 0;
+
+            switch (this.type)
+            {
+
+                case 0:
+
+                    if (this.rotation % 2 == 0)
+                        for (int i = 0; i < 4; i++)
+                            result[i, 0] = 1;
+                    else
+                        for (int i = 0; i < 4; i++)
+                            result[0, i] = 1;
+                    
+                    break;
+                case 1:
+
+                    for (int i = 0; i < 2; i++)
+                        for (int j = 0; j < 2; j++)
+                            result[i, j] = 1;
+
+                    break;
+                case 2:
+
+                    switch (this.rotation)
+                    {
+
+                        case 0:
+
+                            result[0, 1] = 1;
+                            for (int i = 0; i < 3; i++)
+                                result[1, i] = 1;
+
+                            break;
+                        case 1:
+
+                            result[1, 1] = 1;
+                            for (int i = 0; i < 3; i++)
+                                result[i, 0] = 1;
+
+                            break;
+                        case 2:
+
+                            result[1, 1] = 1;
+                            for (int i = 0; i < 3; i++)
+                                result[0, i] = 1;
+
+                            break;
+                        case 3:
+
+                            result[1, 0] = 1;
+                            for (int i = 0; i < 3; i++)
+                                result[i, 1] = 1;
+
+                            break;
+
+                    }
+
+                    break;
+                case 3:
+
+                    switch (this.rotation)
+                    {
+
+                        case 0:
+
+                            result[2, 1] = 1;
+                            for (int i = 0; i < 3; i++)
+                                result[i, 0] = 1;
+
+                            break;
+                        case 1:
+
+                            result[1, 0] = 1;
+                            for (int i = 0; i < 3; i++)
+                                result[0, i] = 1;
+
+                            break;
+                        case 2:
+
+                            result[0, 0] = 1;
+                            for (int i = 0; i < 3; i++)
+                                result[i, 1] = 1;
+
+                            break;
+                        case 3:
+
+                            result[0, 2] = 1;
+                            for (int i = 0; i < 3; i++)
+                                result[1, i] = 1;
+
+                            break;
+
+                    }
+
+                    break;
+                case 4:
+
+                    switch (this.rotation)
+                    {
+
+                        case 0:
+
+                            result[2, 0] = 1;
+                            for (int i = 0; i < 3; i++)
+                                result[i, 1] = 1;
+
+                            break;
+                        case 1:
+
+                            result[0, 0] = 1;
+                            for (int i = 0; i < 3; i++)
+                                result[1, i] = 1;
+
+                            break;
+                        case 2:
+
+                            result[0, 1] = 1;
+                            for (int i = 0; i < 3; i++)
+                                result[i, 0] = 1;
+
+                            break;
+                        case 3:
+
+                            result[1, 2] = 1;
+                            for (int i = 0; i < 3; i++)
+                                result[0, i] = 1;
+
+                            break;
+
+                    }
+
+                    break;
+                case 5:
+
+                    if (this.rotation % 2 == 0)
+                    {
+                        result[1, 0] = 1;
+                        result[2, 0] = 1;
+                        result[0, 1] = 1;
+                        result[1, 1] = 1;
+                    } 
+                    else
+                    {
+                        result[0, 0] = 1;
+                        result[0, 1] = 1;
+                        result[1, 1] = 1;
+                        result[1, 2] = 1;
+                    }
+
+                    break;
+                case 6:
+
+                    if (this.rotation % 2 == 0)
+                    {
+                        result[0, 0] = 1;
+                        result[1, 0] = 1;
+                        result[1, 1] = 1;
+                        result[2, 1] = 1;
+                    }
+                    else
+                    {
+                        result[0, 1] = 1;
+                        result[0, 2] = 1;
+                        result[1, 0] = 1;
+                        result[1, 1] = 1;
+                    }
+
+                    break;
+
+            }
+
+            return result;
 
         }
 
