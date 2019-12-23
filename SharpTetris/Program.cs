@@ -74,7 +74,6 @@ namespace SharpTetris
          */
 
         private int type, rotation;
-        private Dictionary<char, int> position;
 
         public Tetramino(int type)
         {
@@ -84,15 +83,136 @@ namespace SharpTetris
 
         }
 
+        public void Rotate(int direction)
+        {
+
+            if (direction == 1)
+                this.rotation = (this.rotation + 1) % 4;
+            else
+                this.rotation = (this.rotation - 1 < 0 ? 3 : this.rotation - 1);
+
+        }
+
+        public int[] GetRenderSize()
+        {
+
+            int[] result = new int[2];
+
+            switch (this.type)
+            {
+
+                case 0:
+
+                    if (this.rotation % 2 == 0) 
+                    { 
+                        result[0] = 4;
+                        result[1] = 1;
+                    } 
+                    else 
+                    {
+                        result[0] = 1;
+                        result[1] = 4;
+                    }
+
+                    break;
+                case 1:
+                    result[0] = 2;
+                    result[1] = 2;
+                    break;
+                case 2:
+
+                    if (this.rotation % 2 == 0)
+                    {
+                        result[0] = 2;
+                        result[1] = 3;
+                    }
+                    else
+                    {
+                        result[0] = 3;
+                        result[1] = 2;
+                    }
+
+                    break;
+                case 3:
+
+                    if (this.rotation % 2 == 0)
+                    {
+                        result[0] = 3;
+                        result[1] = 2;
+                    }
+                    else
+                    {
+                        result[0] = 2;
+                        result[1] = 3;
+                    }
+
+                    break;
+                case 4:
+
+                    if (this.rotation % 2 == 0)
+                    {
+                        result[0] = 3;
+                        result[1] = 2;
+                    }
+                    else
+                    {
+                        result[0] = 2;
+                        result[1] = 3;
+                    }
+
+                    break;
+                case 5:
+
+                    if (this.rotation % 2 == 0)
+                    {
+                        result[0] = 3;
+                        result[1] = 2;
+                    }
+                    else
+                    {
+                        result[0] = 2;
+                        result[1] = 3;
+                    }
+
+                    break;
+                case 6:
+
+                    if (this.rotation % 2 == 0)
+                    {
+                        result[0] = 3;
+                        result[1] = 2;
+                    }
+                    else
+                    {
+                        result[0] = 2;
+                        result[1] = 3;
+                    }
+
+                    break;
+
+            }
+
+            return result;
+
+        }
+
+        public char[,] Render()
+        {
+
+            
+
+        }
+
     }
     class Program
     {
+
+        static bool gameover = false;
 
         static void LifeCycle()
         {
 
             Matrix matrix = new Matrix(10, 20);
-            bool gameover = false;
 
             while (!gameover)
             {
