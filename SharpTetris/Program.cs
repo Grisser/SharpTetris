@@ -13,7 +13,7 @@ namespace SharpTetris
 
         private int width, height;
         private int[] tetraminoPosition;
-        private int[,] matrix;
+        private int[,] matrix, activeMatrix;
 
         public Matrix(int width, int height)
         {
@@ -22,6 +22,7 @@ namespace SharpTetris
             this.height = height;
 
             matrix = new int[height, width];
+            activeMatrix = new int[height, width];
 
         }
 
@@ -36,7 +37,7 @@ namespace SharpTetris
                 Console.Write('#');
 
                 for (int j = 0; j < width; j++)
-                    Console.Write(matrix[i, j] == 1 ? '*' : ' ');
+                    Console.Write(activeMatrix[i, j] == 1 ? '*' : ' ');
 
                 Console.WriteLine('#');
 
@@ -63,6 +64,10 @@ namespace SharpTetris
             int[] size = tetramino.GetRenderSize();
             int[,] render = tetramino.Render();
 
+            for (int i = 0; i < height; i++)
+                for (int j = 0; j < width; j++)
+                    activeMatrix[i, j] = matrix[i, j];
+
             for (int i = 0; i < size[0]; i++)
                 for (int j = 0; j < size[1]; j++)
                     if (matrix[tetraminoPosition[0] + i, tetraminoPosition[1] + j] == 1)
@@ -71,9 +76,22 @@ namespace SharpTetris
             if (canImpose)
                 for (int i = 0; i < size[0]; i++)
                     for (int j = 0; j < size[1]; j++)
-                        matrix[tetraminoPosition[0] + i, tetraminoPosition[1] + j] = render[i, j];
+                        activeMatrix[tetraminoPosition[0] + i, tetraminoPosition[1] + j] = render[i, j];
 
             return canImpose;
+
+        }
+
+        public void InsertTetramino(Tetramino tetramino)
+        {
+
+            tetraminoPosition = tetramino.GetPositon();
+            int[] size = tetramino.GetRenderSize();
+            int[,] render = tetramino.Render();
+
+            for (int i = 0; i < size[0]; i++)
+                for (int j = 0; j < size[1]; j++)
+                    matrix[tetraminoPosition[0] + i, tetraminoPosition[1] + j] = render[i, j];
 
         }
 
@@ -405,6 +423,23 @@ namespace SharpTetris
 
         }
 
+        public void GoDown()
+        {
+            positon[0]++;
+        }
+        public void GoBack()
+        {
+            positon[0]--;
+        }
+        public void GoLeft()
+        {
+            positon[1]--;
+        }
+        public void GoRight()
+        {
+            positon[1]++;
+        }
+
         public int[] GetPositon()
         {
             return this.positon;
@@ -415,22 +450,52 @@ namespace SharpTetris
     {
 
         static bool gameover = false;
+        const int WIDTH = 10, HEIGHT = 20;
 
         static void LifeCycle()
         {
 
             bool hasTetramino = true;
             Random random = new Random((int) DateTime.Now.Ticks & 0x0000FFFF);
-            Matrix matrix = new Matrix(10, 20);
+            Matrix matrix = new Matrix(WIDTH, HEIGHT);
             Tetramino tetramino = new Tetramino(random.Next(7));
 
             while (!gameover)
             {
 
-                if (!hasTetramino)
-                    tetramino = new Tetramino(random.Next(7));
+                int[] position = tetramino.GetPositon();
+                int[] renderSize = tetramino.GetRenderSize();
 
-                matrix.ImposeTetramino(tetramino);
+                if (!hasTetramino)
+                {
+
+                    tetramino = new Tetramino(random.Next(7));
+                    hasTetramino = true;
+
+                }
+
+                if (position[0] + renderSize[0] <= HEIGHT)
+                {
+
+                    if (matrix.ImposeTetramino(tetramino))
+                        tetramino.GoDown();
+                    else {
+
+                        tetramino.GoBack();
+                        matrix.InsertTetramino(tetramino);
+                        hasTetramino = false;
+
+                    }
+
+                } 
+                else
+                {
+
+                    tetramino.GoBack();
+                    matrix.InsertTetramino(tetramino);
+                    hasTetramino = false;
+
+                }
 
                 Console.Clear();
                 matrix.Render();
