@@ -450,8 +450,8 @@ namespace SharpTetris
     {
 
         static bool gameover = false;
-        static int controllerPosition = 0;
-        const int WIDTH = 10, HEIGHT = 20;
+        static int controllerPosition = 0, rotateIntention = 0;
+        const int WIDTH = 10, HEIGHT = 20, LEFT = -1, RIGHT = 1, CLOCKWISE = 1, COUNTER_CLOCKWISE = -1;
 
         static void Controller()
         {
@@ -460,24 +460,40 @@ namespace SharpTetris
             {
 
                 controllerPosition = 0;
+                rotateIntention = 0;
 
                 switch (Console.ReadKey(true).Key)
                 {
 
                     case ConsoleKey.A:
-                        controllerPosition = -1;
+                        controllerPosition = LEFT;
                         break;
                     case ConsoleKey.D:
-                        controllerPosition = 1;
+                        controllerPosition = RIGHT;
                         break;
                     case ConsoleKey.LeftArrow:
-                        controllerPosition = -1;
+                        controllerPosition = LEFT;
                         break;
                     case ConsoleKey.RightArrow:
-                        controllerPosition = 1;
+                        controllerPosition = RIGHT;
                         break;
                     default:
                         controllerPosition = 0;
+                        break;
+
+                }
+
+                switch (Console.ReadKey(true).Key)
+                {
+
+                    case ConsoleKey.Q:
+                        rotateIntention = COUNTER_CLOCKWISE;
+                        break;
+                    case ConsoleKey.E:
+                        rotateIntention = CLOCKWISE;
+                        break;
+                    default:
+                        rotateIntention = 0;
                         break;
 
                 }
@@ -517,50 +533,74 @@ namespace SharpTetris
                 switch (controllerPosition)
                 {
 
-                    case -1:
-                        if (position[1] > 0) 
-                            position[1]--;
+                    case LEFT:
+                        if (position[1] > 0)
+                        {
+
+                            tetramino.GoLeft();
+
+                            if (!matrix.ImposeTetramino(tetramino))
+                                tetramino.GoRight();
+
+                        }
 
                         controllerPosition = 0;
                         
                         break;
-                    case 1:
+                    case RIGHT:
                         if (position[1] + renderSize[1] < WIDTH)
-                            position[1]++;
+                        {
 
-                        controllerPosition = 0;
+                            tetramino.GoRight();
+
+                            if (!matrix.ImposeTetramino(tetramino))
+                                tetramino.GoLeft();
+
+                        }
+
+                        break;
+                    default:
+                        if (position[0] + renderSize[0] <= HEIGHT)
+                        {
+
+                            if (matrix.ImposeTetramino(tetramino))
+                                tetramino.GoDown();
+                            else if (position[0] == 0)
+                            {
+
+                                gameover = true;
+
+                            }
+                            else
+                            {
+
+                                tetramino.GoBack();
+                                matrix.InsertTetramino(tetramino);
+                                hasTetramino = false;
+
+                            }
+
+                        }
+                        else
+                        {
+
+                            tetramino.GoBack();
+                            matrix.InsertTetramino(tetramino);
+                            hasTetramino = false;
+
+                        }
 
                         break;
 
                 }
 
-                if (position[0] + renderSize[0] <= HEIGHT)
+                switch (rotateIntention)
                 {
 
-                    if (matrix.ImposeTetramino(tetramino))
-                        tetramino.GoDown();
-                    else if (position[0] == 0)
-                    {
-
-                        gameover = true;
-
-                    } 
-                    else
-                    {
-
-                        tetramino.GoBack();
-                        matrix.InsertTetramino(tetramino);
-                        hasTetramino = false;
-
-                    }
-
-                } 
-                else
-                {
-
-                    tetramino.GoBack();
-                    matrix.InsertTetramino(tetramino);
-                    hasTetramino = false;
+                    case CLOCKWISE:
+                        break;
+                    case COUNTER_CLOCKWISE:
+                        break;
 
                 }
 
