@@ -456,30 +456,38 @@ namespace SharpTetris
         {
 
             bool hasTetramino = true;
-            Random random = new Random((int) DateTime.Now.Ticks & 0x0000FFFF);
+            
+            Random random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
             Matrix matrix = new Matrix(WIDTH, HEIGHT);
             Tetramino tetramino = new Tetramino(random.Next(7));
 
             while (!gameover)
             {
 
-                int[] position = tetramino.GetPositon();
-                int[] renderSize = tetramino.GetRenderSize();
-
                 if (!hasTetramino)
                 {
 
-                    tetramino = new Tetramino(/*random.Next(7)*/6);
+                    tetramino = new Tetramino(random.Next(7));
                     hasTetramino = true;
 
                 }
+
+                int[] position = tetramino.GetPositon();
+                int[] renderSize = tetramino.GetRenderSize();
 
                 if (position[0] + renderSize[0] <= HEIGHT)
                 {
 
                     if (matrix.ImposeTetramino(tetramino))
                         tetramino.GoDown();
-                    else {
+                    else if (position[0] == 0)
+                    {
+
+                        gameover = true;
+
+                    } 
+                    else
+                    {
 
                         tetramino.GoBack();
                         matrix.InsertTetramino(tetramino);
