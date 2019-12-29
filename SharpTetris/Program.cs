@@ -470,6 +470,12 @@ namespace SharpTetris
                     case ConsoleKey.D:
                         controllerPosition = 1;
                         break;
+                    case ConsoleKey.LeftArrow:
+                        controllerPosition = -1;
+                        break;
+                    case ConsoleKey.RightArrow:
+                        controllerPosition = 1;
+                        break;
                     default:
                         controllerPosition = 0;
                         break;
@@ -507,6 +513,26 @@ namespace SharpTetris
 
                 int[] position = tetramino.GetPositon();
                 int[] renderSize = tetramino.GetRenderSize();
+
+                switch (controllerPosition)
+                {
+
+                    case -1:
+                        if (position[1] > 0) 
+                            position[1]--;
+
+                        controllerPosition = 0;
+                        
+                        break;
+                    case 1:
+                        if (position[1] + renderSize[1] < WIDTH)
+                            position[1]++;
+
+                        controllerPosition = 0;
+
+                        break;
+
+                }
 
                 if (position[0] + renderSize[0] <= HEIGHT)
                 {
