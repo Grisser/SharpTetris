@@ -95,8 +95,10 @@ namespace SharpTetris
 
         }
 
-        public void CheckRows()
+        public int CheckRows()
         {
+
+            int count = 0;
 
             for (int i = 1; i < height; i++)
             {
@@ -108,6 +110,8 @@ namespace SharpTetris
 
                 if (sum == width)
                 {
+
+                    count++;
 
                     for (int j = 0; i < width; j++)
                         matrix[i, j] = 0;
@@ -124,6 +128,8 @@ namespace SharpTetris
                 }
 
             }
+
+            return count;
 
         }
 
@@ -540,11 +546,15 @@ namespace SharpTetris
         {
 
             bool hasTetramino = true;
+            int scores = 0;
             
             Random random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
             Matrix matrix = new Matrix(WIDTH, HEIGHT);
             Tetramino tetramino = new Tetramino(random.Next(7));
             Thread controller = new Thread(Controller);
+
+            for (int i = 0; i < random.Next(4); i++)
+                tetramino.Rotate(1);
 
             controller.Start();
 
@@ -557,10 +567,23 @@ namespace SharpTetris
                     tetramino = new Tetramino(random.Next(7));
                     hasTetramino = true;
 
+                    for (int i = 0; i < random.Next(4); i++)
+                        tetramino.Rotate(1);
+
                 }
 
                 int[] position = tetramino.GetPositon();
                 int[] renderSize = tetramino.GetRenderSize();
+
+                switch (rotateIntention)
+                {
+
+                    case CLOCKWISE:
+                        break;
+                    case COUNTER_CLOCKWISE:
+                        break;
+
+                }
 
                 switch (controllerPosition)
                 {
@@ -626,18 +649,9 @@ namespace SharpTetris
 
                 }
 
-                switch (rotateIntention)
-                {
-
-                    case CLOCKWISE:
-                        break;
-                    case COUNTER_CLOCKWISE:
-                        break;
-
-                }
-
                 Console.Clear();
-                matrix.CheckRows();
+                scores += 100 * matrix.CheckRows();
+                Console.WriteLine($"Scores: {scores}\n");
                 matrix.Render();
                 Thread.Sleep(300);
 
