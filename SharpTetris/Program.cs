@@ -95,6 +95,38 @@ namespace SharpTetris
 
         }
 
+        public void CheckRows()
+        {
+
+            for (int i = 1; i < height; i++)
+            {
+
+                int sum = 0;
+
+                for (int j = 0; j < width; j++)
+                    sum += matrix[i, j];
+
+                if (sum == width)
+                {
+
+                    for (int j = 0; i < width; j++)
+                        matrix[i, j] = 0;
+
+                    for (int j = i - 1; j >= 0; j--)
+                        for (int k = 0; k < width; k++)
+                        {
+
+                            matrix[j + 1, k] = matrix[j, k];
+                            matrix[j, k] = 0;
+
+                        }
+
+                }
+
+            }
+
+        }
+
     }
 
     class Tetramino
@@ -605,6 +637,7 @@ namespace SharpTetris
                 }
 
                 Console.Clear();
+                matrix.CheckRows();
                 matrix.Render();
                 Thread.Sleep(300);
 
