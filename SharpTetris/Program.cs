@@ -95,6 +95,44 @@ namespace SharpTetris
 
         }
 
+        public int CheckRows()
+        {
+
+            int count = 0;
+
+            for (int i = 1; i < height; i++)
+            {
+
+                int sum = 0;
+
+                for (int j = 0; j < width; j++)
+                    sum += matrix[i, j];
+
+                if (sum == width)
+                {
+
+                    count++;
+
+                    for (int j = 0; i < width; j++)
+                        matrix[i, j] = 0;
+
+                    for (int j = i - 1; j >= 0; j--)
+                        for (int k = 0; k < width; k++)
+                        {
+
+                            matrix[j + 1, k] = matrix[j, k];
+                            matrix[j, k] = 0;
+
+                        }
+
+                }
+
+            }
+
+            return count;
+
+        }
+
     }
 
     class Tetramino
@@ -450,16 +488,75 @@ namespace SharpTetris
     {
 
         static bool gameover = false;
-        const int WIDTH = 10, HEIGHT = 20;
+        static int controllerPosition = 0, rotateIntention = 0;
+        const int WIDTH = 10, HEIGHT = 20, LEFT = -1, RIGHT = 1, CLOCKWISE = 1, COUNTER_CLOCKWISE = -1;
+
+        static void Controller()
+        {
+
+            while(!gameover)
+            {
+
+                controllerPosition = 0;
+                rotateIntention = 0;
+
+                switch (Console.ReadKey(true).Key)
+                {
+
+                    case ConsoleKey.A:
+                        controllerPosition = LEFT;
+                        break;
+                    case ConsoleKey.D:
+                        controllerPosition = RIGHT;
+                        break;
+                    case ConsoleKey.LeftArrow:
+                        controllerPosition = LEFT;
+                        break;
+                    case ConsoleKey.RightArrow:
+                        controllerPosition = RIGHT;
+                        break;
+                    default:
+                        controllerPosition = 0;
+                        break;
+
+                }
+
+                switch (Console.ReadKey(true).Key)
+                {
+
+                    case ConsoleKey.Q:
+                        rotateIntention = COUNTER_CLOCKWISE;
+                        break;
+                    case ConsoleKey.E:
+                        rotateIntention = CLOCKWISE;
+                        break;
+                    default:
+                        rotateIntention = 0;
+                        break;
+
+                }
+
+                Thread.Sleep(50);
+
+            }
+
+        }
 
         static void LifeCycle()
         {
 
             bool hasTetramino = true;
+            int scores = 0;
             
             Random random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
             Matrix matrix = new Matrix(WIDTH, HEIGHT);
             Tetramino tetramino = new Tetramino(random.Next(7));
+            Thread controller = new Thread(Controller);
+
+            for (int i = 0; i < random.Next(4); i++)
+                tetramino.Rotate(1);
+
+            controller.Start();
 
             while (!gameover)
             {
@@ -470,47 +567,97 @@ namespace SharpTetris
                     tetramino = new Tetramino(random.Next(7));
                     hasTetramino = true;
 
+                    for (int i = 0; i < random.Next(4); i++)
+                        tetramino.Rotate(1);
+
                 }
 
                 int[] position = tetramino.GetPositon();
                 int[] renderSize = tetramino.GetRenderSize();
 
-                if (position[0] + renderSize[0] <= HEIGHT)
+                switch (rotateIntention)
                 {
 
-                    if (matrix.ImposeTetramino(tetramino))
-                        tetramino.GoDown();
-                    else if (position[0] == 0)
-                    {
+                    case CLOCKWISE:
+                        break;
+                    case COUNTER_CLOCKWISE:
+                        break;
 
-                        gameover = true;
+                }
 
-                    } 
-                    else
-                    {
-
-                        tetramino.GoBack();
-                        matrix.InsertTetramino(tetramino);
-                        hasTetramino = false;
-
-                    }
-
-                } 
-                else
+                switch (controllerPosition)
                 {
 
-                    tetramino.GoBack();
-                    matrix.InsertTetramino(tetramino);
-                    hasTetramino = false;
+                    case LEFT:
+                        if (position[1] > 0)
+                        {
+
+                            tetramino.GoLeft();
+
+                            if (!matrix.ImposeTetramino(tetramino))
+                                tetramino.GoRight();
+
+                        }
+
+                        controllerPosition = 0;
+                        
+                        break;
+                    case RIGHT:
+                        if (position[1] + renderSize[1] < WIDTH)
+                        {
+
+                            tetramino.GoRight();
+
+                            if (!matrix.ImposeTetramino(tetramino))
+                                tetramino.GoLeft();
+
+                        }
+
+                        break;
+                    default:
+                        if (position[0] + renderSize[0] <= HEIGHT)
+                        {
+
+                            if (matrix.ImposeTetramino(tetramino))
+                                tetramino.GoDown();
+                            else if (position[0] == 0)
+                            {
+
+                                gameover = true;
+
+                            }
+                            else
+                            {
+
+                                tetramino.GoBack();
+                                matrix.InsertTetramino(tetramino);
+                                hasTetramino = false;
+
+                            }
+
+                        }
+                        else
+                        {
+
+                            tetramino.GoBack();
+                            matrix.InsertTetramino(tetramino);
+                            hasTetramino = false;
+
+                        }
+
+                        break;
 
                 }
 
                 Console.Clear();
+                scores += 100 * matrix.CheckRows();
+                Console.WriteLine($"Scores: {scores}\n");
                 matrix.Render();
-                Thread.Sleep(500);
+                Thread.Sleep(300);
 
             }
 
+            controller.Abort();
             Console.Clear();
             Console.WriteLine("GAME OVER!\n\nPress any key to continue...");
             Console.ReadKey();
