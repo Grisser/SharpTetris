@@ -450,7 +450,37 @@ namespace SharpTetris
     {
 
         static bool gameover = false;
+        static int controllerPosition = 0;
         const int WIDTH = 10, HEIGHT = 20;
+
+        static void Controller()
+        {
+
+            while(!gameover)
+            {
+
+                controllerPosition = 0;
+
+                switch (Console.ReadKey(true).Key)
+                {
+
+                    case ConsoleKey.A:
+                        controllerPosition = -1;
+                        break;
+                    case ConsoleKey.D:
+                        controllerPosition = 1;
+                        break;
+                    default:
+                        controllerPosition = 0;
+                        break;
+
+                }
+
+                Thread.Sleep(50);
+
+            }
+
+        }
 
         static void LifeCycle()
         {
@@ -460,6 +490,9 @@ namespace SharpTetris
             Random random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
             Matrix matrix = new Matrix(WIDTH, HEIGHT);
             Tetramino tetramino = new Tetramino(random.Next(7));
+            Thread controller = new Thread(Controller);
+
+            controller.Start();
 
             while (!gameover)
             {
@@ -507,9 +540,11 @@ namespace SharpTetris
 
                 Console.Clear();
                 matrix.Render();
-                Thread.Sleep(500);
+                Thread.Sleep(300);
 
             }
+
+            controller.Abort();
 
         }
         static void Main(string[] args)
