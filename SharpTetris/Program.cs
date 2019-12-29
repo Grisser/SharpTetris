@@ -70,13 +70,13 @@ namespace SharpTetris
 
             for (int i = 0; i < size[0]; i++)
                 for (int j = 0; j < size[1]; j++)
-                    if (matrix[tetraminoPosition[0] + i, tetraminoPosition[1] + j] == 1)
+                    if ((matrix[tetraminoPosition[0] + i, tetraminoPosition[1] + j] == 1) && (render[i, j] == 1))
                         canImpose = false;
 
             if (canImpose)
                 for (int i = 0; i < size[0]; i++)
                     for (int j = 0; j < size[1]; j++)
-                        activeMatrix[tetraminoPosition[0] + i, tetraminoPosition[1] + j] = render[i, j];
+                        activeMatrix[tetraminoPosition[0] + i, tetraminoPosition[1] + j] = render[i, j] | activeMatrix[tetraminoPosition[0] + i, tetraminoPosition[1] + j];
 
             return canImpose;
 
@@ -91,7 +91,7 @@ namespace SharpTetris
 
             for (int i = 0; i < size[0]; i++)
                 for (int j = 0; j < size[1]; j++)
-                    matrix[tetraminoPosition[0] + i, tetraminoPosition[1] + j] = render[i, j];
+                    matrix[tetraminoPosition[0] + i, tetraminoPosition[1] + j] = render[i, j] | matrix[tetraminoPosition[0] + i, tetraminoPosition[1] + j];
 
         }
 
@@ -469,7 +469,7 @@ namespace SharpTetris
                 if (!hasTetramino)
                 {
 
-                    tetramino = new Tetramino(random.Next(7));
+                    tetramino = new Tetramino(/*random.Next(7)*/6);
                     hasTetramino = true;
 
                 }
