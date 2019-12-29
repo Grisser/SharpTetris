@@ -658,6 +658,9 @@ namespace SharpTetris
             }
 
             controller.Abort();
+            Console.Clear();
+            Console.WriteLine("GAME OVER!\n\nPress any key to continue...");
+            Console.ReadKey();
 
         }
         static void Main(string[] args)
@@ -665,6 +668,7 @@ namespace SharpTetris
 
             Thread gamecycle = new Thread(LifeCycle);
             gamecycle.Start();
+            
 
         }
 
